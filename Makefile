@@ -47,9 +47,11 @@ all:
 
 # $(BUILD_DIR) is "build_" + <target-name>
 # $(SOURCE_DIR) *MUST* be <target-name> -thus, source folder name should be equal to target-
-binutils:
+binutils: flex
 	# == Building binutils cross toolchain == [CRSBNT]
 	$(eval SRC_DIR:=binutils-2.30)
+	$(eval PATH:=$(PREFIX)/bin:$(PATH))
+	export PATH=$(PATH)
 	$(eval CONFIGURE_PARAMS:=--with-sysroot=${PREFIX} --prefix=${PREFIX} \
 	--host=x86_64-w64-mingw32 --target=x86_64-w64-mingw32 --enable-targets=x86_64-w64-mingw32,i686-w64-mingw32)
 	$(call make_all_template,$(PREFIX),$(THIS_MAKEFILE_DIR)/build_$@,$(THIS_MAKEFILE_DIR)/$(SRC_DIR),$(CONFIGURE_PARAMS), false)
@@ -135,5 +137,6 @@ gcc-cross-compilers-finish:
 clean:
 	@rm -rf build_*
 	@rm -rf _install_dir_*
+	@rm -rf flex-2.6.3/autom4te.cache mpfr-3.1.4/autom4te.cache
 	@git checkout -- binutils-2.30 flex-2.6.3 gcc-8.1.0 gmp-6.1.0 mingw-w64 mpfr-3.1.4 mpc-1.0.3
 
