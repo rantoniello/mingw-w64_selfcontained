@@ -137,6 +137,7 @@ gcc-cross-compilers-finish:
 clean:
 	@rm -rf build_*
 	@rm -rf _install_dir_*
+	@rm -f hello_world_test-w64.exe
 	@rm -rf flex-2.6.3/autom4te.cache mpfr-3.1.4/autom4te.cache
 	@git checkout -- binutils-2.30 flex-2.6.3 gcc-8.1.0 gmp-6.1.0 mingw-w64 mpfr-3.1.4 mpc-1.0.3
 
