@@ -111,7 +111,7 @@ gcc-cross-compilers: flex mpc
 	#export LD_LIBRARY_PATH=$(LD_LIBRARY_PATH) #pass directly
 	#@echo LD_LIBRARY_PATH is: '$(LD_LIBRARY_PATH)'
 	$(eval CONFIGURE_PARAMS:=--with-sysroot=${PREFIX} --prefix=${PREFIX} --target=x86_64-w64-mingw32 --enable-targets=all \
-	--with-gmp=$(PREFIX) --with-mpfr=$(PREFIX) --with-mpc=$(PREFIX))
+	--with-gmp=$(PREFIX) --with-mpfr=$(PREFIX) --with-mpc=$(PREFIX) --enable-languages=c,c++)
 	$(call configure_template,$(PREFIX),$(THIS_MAKEFILE_DIR)/build_$@,$(THIS_MAKEFILE_DIR)/$(SRC_DIR),$(CONFIGURE_PARAMS), false)
 	cd $(THIS_MAKEFILE_DIR)/build_$@; make all-gcc LD_LIBRARY_PATH=$(LD_LIBRARY_PATH)
 	cd $(THIS_MAKEFILE_DIR)/build_$@; make install-gcc
