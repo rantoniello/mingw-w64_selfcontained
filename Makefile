@@ -44,6 +44,7 @@ all:
 	make gcc-cross-compilers
 	make mingw-w64-crt
 	make gcc-cross-compilers-finish
+	make pthreads
 
 # $(BUILD_DIR) is "build_" + <target-name>
 # $(SOURCE_DIR) *MUST* be <target-name> -thus, source folder name should be equal to target-
@@ -134,10 +135,23 @@ gcc-cross-compilers-finish:
 	cd $(THIS_MAKEFILE_DIR)/build_gcc-cross-compilers; make LD_LIBRARY_PATH=$(LD_LIBRARY_PATH)
 	cd $(THIS_MAKEFILE_DIR)/build_gcc-cross-compilers; make install
 
+pthreads:
+	# === pthreads-win32 === [PTHRW32]
+	cd $(THIS_MAKEFILE_DIR)/pthreads-w32-2-9-1-release; make clean GC CROSS=x86_64-w64-mingw32-
+	cd $(THIS_MAKEFILE_DIR)/pthreads-w32-2-9-1-release; cp -a pthreadGC2.dll $(PREFIX)/x86_64-w64-mingw32/lib/libpthread.a
+	cd $(THIS_MAKEFILE_DIR)/pthreads-w32-2-9-1-release; cp -a pthread.h sched.h semaphore.h $(PREFIX)/x86_64-w64-mingw32/include/
+	#while read a ; do echo ${a//#if\ defined(HAVE_PTW32_CONFIG_H)/\/*\ #if HAVE_CONFIG_H\ *\/} ; done < $(PREFIX)/x86_64-w64-mingw32/include/pthread.h > $(PREFIX)/x86_64-w64-mingw32/include/pthread.h.t ; mv $(PREFIX)/x86_64-w64-mingw32/include/pthread.h{.t,}
+	sed -i -e 's/#if\ defined(HAVE_PTW32_CONFIG_H)/\/\/#if\ defined(HAVE_PTW32_CONFIG_H)\ \/\/RAL/g' $(PREFIX)/x86_64-w64-mingw32/include/pthread.h
+	sed -i -e 's/#endif\ \/\*\ HAVE_PTW32_CONFIG_H\ \*\//\/\/#endif\ \/\*\ HAVE_PTW32_CONFIG_H\ \*\/\ \/\/RAL/g' $(PREFIX)/x86_64-w64-mingw32/include/pthread.h
+	sed -i -e 's/#include\ "config.h"/#include\ "pconfig.h"\ \/\/RAL/g' $(PREFIX)/x86_64-w64-mingw32/include/pthread.h
+	cp -a $(THIS_MAKEFILE_DIR)/pthreads-w32-2-9-1-release/config.h $(PREFIX)/x86_64-w64-mingw32/include/pconfig.h
+
 clean:
 	@rm -rf build_*
 	@rm -rf _install_dir_*
 	@rm -f hello_world_test-w64.exe
 	@rm -rf flex-2.6.3/autom4te.cache mpfr-3.1.4/autom4te.cache
-	@git checkout -- binutils-2.30 flex-2.6.3 gcc-8.1.0 gmp-6.1.0 mingw-w64 mpfr-3.1.4 mpc-1.0.3
+	@git checkout -- binutils-2.30 flex-2.6.3 gcc-8.1.0 gmp-6.1.0 mingw-w64 mpfr-3.1.4 mpc-1.0.3 pthreads-w32-2-9-1-release
+	make -C $(THIS_MAKEFILE_DIR)/pthreads-w32-2-9-1-release clean
+	@rm -rf $(THIS_MAKEFILE_DIR)/pthreads-w32-2-9-1-release/*.a $(THIS_MAKEFILE_DIR)/pthreads-w32-2-9-1-release/*.dll
 
